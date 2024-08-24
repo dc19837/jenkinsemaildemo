@@ -47,10 +47,13 @@ pipeline {
                 body: 'The pipeline has completed successfully.',
                 from: 'dascaxc@yahoo.com',
                 mimeType: 'text/html',
-                smtpServer: 'smtp.mail.yahoo.com',
-                smtpPort: '465',
-                smtpAuth: 'dascaxc@yahoo.com',
-                smtpPassword: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                smtp: [
+                    $class: 'SMTPServer',
+                    server: 'smtp.mail.yahoo.com',
+                    port: 465,
+                    auth: 'dascaxc@yahoo.com',
+                    password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                ]
             )
         }
         failure {
@@ -60,10 +63,13 @@ pipeline {
                 body: 'The pipeline has failed.',
                 from: 'dascaxc@yahoo.com',
                 mimeType: 'text/html',
-                smtpServer: 'smtp.mail.yahoo.com',
-                smtpPort: '465',
-                smtpAuth: 'dascaxc@yahoo.com',
-                smtpPassword: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                smtp: [
+                    $class: 'SMTPServer',
+                    server: 'smtp.mail.yahoo.com',
+                    port: 465,
+                    auth: 'dascaxc@yahoo.com',
+                    password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                ]
             )
         }
         unstable {
@@ -73,10 +79,13 @@ pipeline {
                 body: 'The pipeline has completed with unstable results.',
                 from: 'dascaxc@yahoo.com',
                 mimeType: 'text/html',
-                smtpServer: 'smtp.mail.yahoo.com',
-                smtpPort: '465',
-                smtpAuth: 'dascaxc@yahoo.com',
-                smtpPassword: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                smtp: [
+                    $class: 'SMTPServer',
+                    server: 'smtp.mail.yahoo.com',
+                    port: 465,
+                    auth: 'dascaxc@yahoo.com',
+                    password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                ]
             )
         }
     }
