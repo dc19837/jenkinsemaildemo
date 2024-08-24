@@ -46,7 +46,6 @@ pipeline {
                 subject: 'Pipeline Success',
                 body: 'The pipeline has completed successfully.',
                 from: 'dascaxc@yahoo.com',
-                mimeType: 'text/html'
             )
         }
         failure {
@@ -55,7 +54,6 @@ pipeline {
                 subject: 'Pipeline Failure',
                 body: 'The pipeline has failed.',
                 from: 'dascaxc@yahoo.com',
-                mimeType: 'text/html'
             )
         }
         unstable {
@@ -64,7 +62,6 @@ pipeline {
                 subject: 'Pipeline Unstable',
                 body: 'The pipeline has completed with unstable results.',
                 from: 'dascaxc@yahoo.com',
-                mimeType: 'text/html'
             )
         }
     }
