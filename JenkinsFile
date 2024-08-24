@@ -42,26 +42,23 @@ pipeline {
     post {
         success {
             emailext (
-                to: 'dzassadcass@gmail.com',
+                to: 'dascaxc@yahoo.com',
                 subject: 'Pipeline Success',
                 body: 'The pipeline has completed successfully.',
-                attachmentsPattern: 'logs.txt'
             )
         }
         failure {
             emailext (
-                to: 'dzassadcass@gmail.com',
+                to: 'dascaxc@yahoo.com',
                 subject: 'Pipeline Failure',
                 body: 'The pipeline has failed.',
-                attachmentsPattern: 'logs.txt'
             )
         }
         unstable {
             emailext (
-                to: 'dzassadcass@gmail.com',
+                to: 'dascaxc@yahoo.com',
                 subject: 'Pipeline Unstable',
                 body: 'The pipeline has completed with unstable results.',
-                attachmentsPattern: 'logs.txt'
             )
         }
     }
