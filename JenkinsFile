@@ -47,7 +47,7 @@ pipeline {
                  smtpServer: 'smtp.mail.yahoo.com',
                  smtpPort: '465',
                  from: 'dascaxc@yahoo.com',
-                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq']
         }
         failure {
             mail to: 'dascaxc@yahoo.com',
@@ -56,7 +56,7 @@ pipeline {
                  smtpServer: 'smtp.mail.yahoo.com',
                  smtpPort: '465',
                  from: 'dascaxc@yahoo.com',
-                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq']
         }
         unstable {
             mail to: 'dascaxc@yahoo.com',
@@ -65,7 +65,7 @@ pipeline {
                  smtpServer: 'smtp.mail.yahoo.com',
                  smtpPort: '465',
                  from: 'dascaxc@yahoo.com',
-                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq']
         }
     }
 }
