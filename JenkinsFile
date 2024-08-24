@@ -43,17 +43,29 @@ pipeline {
         success {
             mail to: 'dascaxc@yahoo.com',
                  subject: 'Pipeline Success',
-                 body: 'The pipeline has completed successfully.'
+                 body: 'The pipeline has completed successfully.',
+                 smtpServer: 'smtp.mail.yahoo.com',
+                 smtpPort: '465',
+                 from: 'dascaxc@yahoo.com',
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
         }
         failure {
             mail to: 'dascaxc@yahoo.com',
                  subject: 'Pipeline Failure',
-                 body: 'The pipeline has failed.'
+                 body: 'The pipeline has failed.',
+                 smtpServer: 'smtp.mail.yahoo.com',
+                 smtpPort: '465',
+                 from: 'dascaxc@yahoo.com',
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
         }
         unstable {
             mail to: 'dascaxc@yahoo.com',
                  subject: 'Pipeline Unstable',
-                 body: 'The pipeline has completed with unstable results.'
+                 body: 'The pipeline has completed with unstable results.',
+                 smtpServer: 'smtp.mail.yahoo.com',
+                 smtpPort: '465',
+                 from: 'dascaxc@yahoo.com',
+                 auth: [username: 'dascaxc@yahoo.com', password: '5ftBKrTOcqlwloD2ZS2yoebCn9Ueqq'
         }
     }
 }
