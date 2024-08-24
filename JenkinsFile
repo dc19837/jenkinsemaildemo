@@ -41,25 +41,19 @@ pipeline {
 
     post {
         success {
-            emailext (
-                to: 'dascaxc@yahoo.com',
-                subject: 'Pipeline Success',
-                body: 'The pipeline has completed successfully.',
-            )
+            mail to: 'dascaxc@yahoo.com',
+                 subject: 'Pipeline Success',
+                 body: 'The pipeline has completed successfully.'
         }
         failure {
-            emailext (
-                to: 'dascaxc@yahoo.com',
-                subject: 'Pipeline Failure',
-                body: 'The pipeline has failed.',
-            )
+            mail to: 'dascaxc@yahoo.com',
+                 subject: 'Pipeline Failure',
+                 body: 'The pipeline has failed.'
         }
         unstable {
-            emailext (
-                to: 'dascaxc@yahoo.com',
-                subject: 'Pipeline Unstable',
-                body: 'The pipeline has completed with unstable results.',
-            )
+            mail to: 'dascaxc@yahoo.com',
+                 subject: 'Pipeline Unstable',
+                 body: 'The pipeline has completed with unstable results.'
         }
     }
 }
