@@ -1,47 +1,66 @@
 pipeline {
     agent any
 
+    tools {
+        // Ensure the tool name matches the name configured in Jenkins Global Tool Configuration
+        maven 'Maven 3.8.6'
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from Git
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
-                // Ensure Maven is available in PATH or use absolute path if necessary
+                // Run Maven clean package
                 sh 'mvn clean package'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
+                // Run unit tests
                 sh 'mvn test'
+                // Run integration tests
                 sh 'mvn verify'
             }
         }
 
         stage('Code Analysis') {
             steps {
+                // Perform code analysis
                 sh 'mvn sonar:sonar'
             }
         }
 
         stage('Security Scan') {
             steps {
+                // Perform security scan
                 sh 'sonar-scanner'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
+                // Deploy to staging server
                 sh 'scp target/app.jar user@staging-server:/path/to/deploy'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
+                // Run integration tests on staging environment
                 sh 'curl http://staging-server:8080/run-integration-tests'
             }
         }
 
         stage('Deploy to Production') {
             steps {
+                // Deploy to production server
                 sh 'scp target/app.jar user@production-server:/path/to/deploy'
             }
         }
@@ -52,9 +71,39 @@ pipeline {
             emailext(
                 to: 'dzassadcass@gmail.com',
                 subject: "Build Status: ${currentBuild.currentResult}",
-                body: "Build ${currentBuild.currentResult}. Logs: ${env.BUILD_URL}console",
+                body: """
+                Build ${currentBuild.currentResult}.
+                
+                Check console output at ${env.BUILD_URL}console
+
+                For more details, visit: ${env.BUILD_URL}
+                """,
                 attachmentsPattern: '**/build.log',
                 compressLog: true
+            )
+        }
+        success {
+            emailext(
+                to: 'dzassadcass@gmail.com',
+                subject: 'Pipeline Success',
+                body: 'The pipeline has completed successfully.',
+                from: 'jenkins@example.com' // Use a valid sender email address
+            )
+        }
+        failure {
+            emailext(
+                to: 'dzassadcass@gmail.com',
+                subject: 'Pipeline Failure',
+                body: 'The pipeline has failed. Check the build logs for details.',
+                from: 'jenkins@example.com' // Use a valid sender email address
+            )
+        }
+        unstable {
+            emailext(
+                to: 'dzassadcass@gmail.com',
+                subject: 'Pipeline Unstable',
+                body: 'The pipeline has completed with unstable results. Check the build logs for details.',
+                from: 'jenkins@example.com' // Use a valid sender email address
             )
         }
     }
