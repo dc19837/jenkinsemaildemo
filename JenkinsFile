@@ -40,28 +40,14 @@ pipeline {
     }
 
     post {
-        success {
+        always {
             emailext (
                 to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Success',
-                body: 'The pipeline has completed successfully.',
-                from: 'dzassadcass@gmail.com'
-            )
-        }
-        failure {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Failure',
-                body: 'The pipeline has failed.',
-                from: 'dzassadcass@gmail.com'
-            )
-        }
-        unstable {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Unstable',
-                body: 'The pipeline has completed with unstable results.',
-                from: 'dzassadcass@gmail.com'
+                subject: 'Pipeline Status: ${currentBuild.currentResult}',
+                body: '''<p>The pipeline has completed with status: ${currentBuild.currentResult}</p>
+                         <p>For more details, check the build logs.</p>''',
+                from: 'dzassadcass@gmail.com',
+                attachmentsPattern: '**/log/**/*.log'
             )
         }
     }
