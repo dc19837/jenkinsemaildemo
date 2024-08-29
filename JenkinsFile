@@ -2,53 +2,15 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Test Email') {
             steps {
-                sh 'echo "Building the code..."'
+                emailext (
+                    to: 'dzassadcass@gmail.com',
+                    subject: 'Test Email',
+                    body: 'This is a test email from Jenkins.',
+                    from: 'dzassadcass@gmail.com'
+                )
             }
-        }
-        stage('Unit and Integration Tests') {
-            steps {
-                sh 'echo "Running unit and integration tests..."'
-            }
-        }
-        stage('Code Analysis') {
-            steps {
-                sh 'echo "Analyzing the code..."'
-            }
-        }
-        stage('Security Scan') {
-            steps {
-                sh 'echo "Scanning the code for vulnerabilities..."'
-            }
-        }
-        stage('Deploy to Staging') {
-            steps {
-                sh 'echo "Deploying to staging..."'
-            }
-        }
-        stage('Integration Tests on Staging') {
-            steps {
-                sh 'echo "Running integration tests on staging..."'
-            }
-        }
-        stage('Deploy to Production') {
-            steps {
-                sh 'echo "Deploying to production..."'
-            }
-        }
-    }
-
-    post {
-        always {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Status: ${currentBuild.currentResult}',
-                body: '''<p>The pipeline has completed with status: ${currentBuild.currentResult}</p>
-                         <p>For more details, check the build logs.</p>''',
-                from: 'dzassadcass@gmail.com',
-                attachmentsPattern: '**/log/**/*.log'
-            )
         }
     }
 }
