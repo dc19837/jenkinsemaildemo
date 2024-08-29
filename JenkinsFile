@@ -4,65 +4,70 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'echo "Building the code..."'
+                // Build automation tool
+                sh 'mvn clean package'
+                // Tool: Maven
             }
         }
+
         stage('Unit and Integration Tests') {
             steps {
-                sh 'echo "Running unit and integration tests..."'
+                // Run unit tests
+                sh 'mvn test'
+                // Run integration tests
+                sh 'mvn verify'
+                // Tool: Maven Surefire and Failsafe plugins
             }
         }
+
         stage('Code Analysis') {
             steps {
-                sh 'echo "Analyzing the code..."'
+                // Perform code analysis
+                sh 'mvn sonar:sonar'
+                // Tool: SonarQube
             }
         }
+
         stage('Security Scan') {
             steps {
-                sh 'echo "Scanning the code for vulnerabilities..."'
+                // Perform security scan
+                sh 'sonar-scanner'
+                // Tool: SonarQube or OWASP Dependency-Check
             }
         }
+
         stage('Deploy to Staging') {
             steps {
-                sh 'echo "Deploying to staging..."'
+                // Deploy to staging server
+                sh 'scp target/app.jar user@staging-server:/path/to/deploy'
+                // Tool: SCP
             }
         }
+
         stage('Integration Tests on Staging') {
             steps {
-                sh 'echo "Running integration tests on staging..."'
+                // Run integration tests on staging environment
+                sh 'curl http://staging-server:8080/run-integration-tests'
+                // Tool: Custom API or test script
             }
         }
+
         stage('Deploy to Production') {
             steps {
-                sh 'echo "Deploying to production..."'
+                // Deploy to production server
+                sh 'scp target/app.jar user@production-server:/path/to/deploy'
+                // Tool: SCP
             }
         }
     }
 
     post {
-        success {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Success',
-                body: 'The pipeline has completed successfully.',
-                from: 'dzassadcass@gmail.com'
-            )
-        }
-        failure {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Failure',
-                body: 'The pipeline has failed.',
-                from: 'dzassadcass@gmail.com'
-            )
-        }
-        unstable {
-            emailext (
-                to: 'dzassadcass@gmail.com',
-                subject: 'Pipeline Unstable',
-                body: 'The pipeline has completed with unstable results.',
-                from: 'dzassadcass@gmail.com'
-            )
+        always {
+            // Send notification emails
+            mail to: 'dzassadcass@gmail.com',
+                 subject: "Build Status: ${currentBuild.currentResult}",
+                 body: "Build ${currentBuild.currentResult}. Logs: ${env.BUILD_URL}console",
+                 attachLog: true
         }
     }
 }
