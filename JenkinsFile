@@ -45,7 +45,7 @@ pipeline {
                 to: 'dzassadcass@gmail.com',
                 subject: 'Pipeline Success',
                 body: 'The pipeline has completed successfully.',
-                from: 'dzassadcass@gmail.com',
+                from: 'dzassadcass@gmail.com'
             )
         }
         failure {
@@ -53,7 +53,7 @@ pipeline {
                 to: 'dzassadcass@gmail.com',
                 subject: 'Pipeline Failure',
                 body: 'The pipeline has failed.',
-                from: 'dzassadcass@gmail.com',
+                from: 'dzassadcass@gmail.com'
             )
         }
         unstable {
@@ -61,7 +61,7 @@ pipeline {
                 to: 'dzassadcass@gmail.com',
                 subject: 'Pipeline Unstable',
                 body: 'The pipeline has completed with unstable results.',
-                from: 'dzassadcass@gmail.com',
+                from: 'dzassadcass@gmail.com'
             )
         }
     }
