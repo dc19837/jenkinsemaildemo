@@ -4,77 +4,64 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script {
-                    echo 'Building the code...'
-                    // Use Maven or another build tool
-                }
+                sh 'echo "Building the code..."'
             }
         }
-        
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    echo 'Running unit and integration tests...'
-                    // Use a test automation tool (e.g., JUnit, TestNG)
-                }
+                sh 'echo "Running unit and integration tests..."'
             }
         }
-        
         stage('Code Analysis') {
             steps {
-                script {
-                    echo 'Performing code analysis...'
-                    // Use a code analysis tool (e.g., SonarQube)
-                }
+                sh 'echo "Analyzing the code..."'
             }
         }
-        
         stage('Security Scan') {
             steps {
-                script {
-                    echo 'Performing security scan...'
-                    // Use a security scan tool (e.g., Snyk)
-                }
+                sh 'echo "Scanning the code for vulnerabilities..."'
             }
         }
-        
         stage('Deploy to Staging') {
             steps {
-                script {
-                    echo 'Deploying to staging server...'
-                    // Deploy to AWS EC2 or similar
-                }
+                sh 'echo "Deploying to staging..."'
             }
         }
-        
         stage('Integration Tests on Staging') {
             steps {
-                script {
-                    echo 'Running integration tests on staging...'
-                    // Run integration tests on staging
-                }
+                sh 'echo "Running integration tests on staging..."'
             }
         }
-        
         stage('Deploy to Production') {
             steps {
-                script {
-                    echo 'Deploying to production server...'
-                    // Deploy to production server
-                }
+                sh 'echo "Deploying to production..."'
             }
         }
     }
 
     post {
-        always {
+        success {
             emailext (
                 to: 'dzassadcass@gmail.com',
-                subject: "Build ${currentBuild.currentResult}: Job ${env.JOB_NAME} Build ${env.BUILD_NUMBER}",
-                body: "Build Details:\n\n${BUILD_URL}console",
-                recipientProviders: [[$class: 'Developers']],
-                attachmentsPattern: '**/test-results/*.xml',
-                attachLog: true
+                subject: 'Pipeline Success',
+                body: 'The pipeline has completed successfully.',
+                from: 'dzassadcass@gmail.com'
+            )
+        }
+        failure {
+            emailext (
+                to: 'dzassadcass@gmail.com',
+                subject: 'Pipeline Failure',
+                body: 'The pipeline has failed.',
+                from: 'dzassadcass@gmail.com'
+            )
+        }
+        unstable {
+            emailext (
+                to: 'dzassadcass@gmail.com',
+                subject: 'Pipeline Unstable',
+                body: 'The pipeline has completed with unstable results.',
+                from: 'dzassadcass@gmail.com'
             )
         }
     }
