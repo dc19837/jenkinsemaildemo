@@ -69,7 +69,7 @@ pipeline {
                 subject: "Build Status: ${currentBuild.currentResult}",
                 body: "Build ${currentBuild.currentResult}. Logs: ${env.BUILD_URL}console",
                 attachmentsPattern: '**/build.log',
-                compress: true
+                compressLog: true
             )
         }
     }
