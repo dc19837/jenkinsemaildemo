@@ -1,12 +1,16 @@
 pipeline {
     agent any
 
+    tools {
+        // Ensure Maven is installed and configured in Jenkins global tools
+        maven 'Maven 3.8.6' // Replace with your Maven version name
+    }
+
     stages {
         stage('Build') {
             steps {
                 // Build automation tool
                 sh 'mvn clean package'
-                // Tool: Maven
             }
         }
 
@@ -16,7 +20,6 @@ pipeline {
                 sh 'mvn test'
                 // Run integration tests
                 sh 'mvn verify'
-                // Tool: Maven Surefire and Failsafe plugins
             }
         }
 
@@ -24,7 +27,6 @@ pipeline {
             steps {
                 // Perform code analysis
                 sh 'mvn sonar:sonar'
-                // Tool: SonarQube
             }
         }
 
@@ -32,7 +34,6 @@ pipeline {
             steps {
                 // Perform security scan
                 sh 'sonar-scanner'
-                // Tool: SonarQube or OWASP Dependency-Check
             }
         }
 
@@ -40,7 +41,6 @@ pipeline {
             steps {
                 // Deploy to staging server
                 sh 'scp target/app.jar user@staging-server:/path/to/deploy'
-                // Tool: SCP
             }
         }
 
@@ -48,7 +48,6 @@ pipeline {
             steps {
                 // Run integration tests on staging environment
                 sh 'curl http://staging-server:8080/run-integration-tests'
-                // Tool: Custom API or test script
             }
         }
 
@@ -56,7 +55,6 @@ pipeline {
             steps {
                 // Deploy to production server
                 sh 'scp target/app.jar user@production-server:/path/to/deploy'
-                // Tool: SCP
             }
         }
     }
@@ -69,7 +67,7 @@ pipeline {
                 subject: "Build Status: ${currentBuild.currentResult}",
                 body: "Build ${currentBuild.currentResult}. Logs: ${env.BUILD_URL}console",
                 attachmentsPattern: '**/build.log',
-                compressLog: true
+                compressLog: true // Changed from 'compress' to 'compressLog'
             )
         }
     }
