@@ -1,59 +1,47 @@
 pipeline {
     agent any
 
-    tools {
-        // Ensure Maven is installed and configured in Jenkins global tools
-        maven 'Maven 3.8.6' // Replace with your Maven version name
-    }
-
     stages {
         stage('Build') {
             steps {
-                // Build automation tool
+                // Ensure Maven is available in PATH or use absolute path if necessary
                 sh 'mvn clean package'
             }
         }
 
         stage('Unit and Integration Tests') {
             steps {
-                // Run unit tests
                 sh 'mvn test'
-                // Run integration tests
                 sh 'mvn verify'
             }
         }
 
         stage('Code Analysis') {
             steps {
-                // Perform code analysis
                 sh 'mvn sonar:sonar'
             }
         }
 
         stage('Security Scan') {
             steps {
-                // Perform security scan
                 sh 'sonar-scanner'
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                // Deploy to staging server
                 sh 'scp target/app.jar user@staging-server:/path/to/deploy'
             }
         }
 
         stage('Integration Tests on Staging') {
             steps {
-                // Run integration tests on staging environment
                 sh 'curl http://staging-server:8080/run-integration-tests'
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                // Deploy to production server
                 sh 'scp target/app.jar user@production-server:/path/to/deploy'
             }
         }
@@ -61,13 +49,12 @@ pipeline {
 
     post {
         always {
-            // Send notification emails
             emailext(
                 to: 'dzassadcass@gmail.com',
                 subject: "Build Status: ${currentBuild.currentResult}",
                 body: "Build ${currentBuild.currentResult}. Logs: ${env.BUILD_URL}console",
                 attachmentsPattern: '**/build.log',
-                compressLog: true // Changed from 'compress' to 'compressLog'
+                compressLog: true
             )
         }
     }
