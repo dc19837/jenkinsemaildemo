@@ -43,7 +43,14 @@ pipeline {
         success {
             mail to: "dzassadcass@gmail.com",
             subject: "Build Status Email",
-            body: "Build was successful!"
+            body: "Build was successful!",
+            attachments: 'jenkins-console.log'
+        }
+        failure {
+            mail to: "dzassadcass@gmail.com",
+            subject: "Build Status Email",
+            body: "Build failed!",
+            attachments: 'jenkins-console.log'
         }
     }
 }
