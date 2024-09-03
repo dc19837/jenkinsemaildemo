@@ -1,60 +1,155 @@
 pipeline {
     agent any
-
+    environment {
+        EMAIL_RECIPIENT = "dzassadcass@gmail.com"
+    }
     stages {
         stage('Build') {
             steps {
-                sh 'echo "Building the code..."'
+                script {
+                    try {
+                        sh 'echo "Building the code..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/build.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                sh 'echo "Running unit and integration tests..."'
+                script {
+                    try {
+                        sh 'echo "Running unit and integration tests..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/test-results.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Code Analysis') {
             steps {
-                sh 'echo "Analyzing the code..."'
+                script {
+                    try {
+                        sh 'echo "Analyzing the code..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/code-analysis.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Security Scan') {
             steps {
-                sh 'echo "Scanning the code for vulnerabilities..."'
+                script {
+                    try {
+                        sh 'echo "Scanning the code for vulnerabilities..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/security-scan.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Deploy to Staging') {
             steps {
-                sh 'echo "Deploying to staging..."'
+                script {
+                    try {
+                        sh 'echo "Deploying to staging..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/deploy-staging.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Integration Tests on Staging') {
             steps {
-                sh 'echo "Running integration tests on staging..."'
+                script {
+                    try {
+                        sh 'echo "Running integration tests on staging..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/integration-tests-staging.log', allowEmptyArchive: true
+                }
             }
         }
         stage('Deploy to Production') {
             steps {
-                sh 'echo "Deploying to production..."'
+                script {
+                    try {
+                        sh 'echo "Deploying to production..."'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/deploy-production.log', allowEmptyArchive: true
+                }
             }
         }
     }
-
     post {
-        success {
-            emailext (
-                to: "dzassadcass@gmail.com",
-                subject: "Build Status Email",
-                body: "Build was successful!",
-                attachmentsPattern: 'jenkins-console.log'
-            )
-        }
-        failure {
-            emailext (
-                to: "dzassadcass@gmail.com",
-                subject: "Build Status Email",
-                body: "Build failed!",
-                attachmentsPattern: 'jenkins-console.log'
-            )
+        always {
+            def emailBody = """
+            Build Status: ${currentBuild.result}
+            Stages:
+            - Build: ${currentBuild.currentResult}
+            - Unit and Integration Tests: ${currentBuild.currentResult}
+            - Code Analysis: ${currentBuild.currentResult}
+            - Security Scan: ${currentBuild.currentResult}
+            - Deploy to Staging: ${currentBuild.currentResult}
+            - Integration Tests on Staging: ${currentBuild.currentResult}
+            - Deploy to Production: ${currentBuild.currentResult}
+            Errors: ${currentBuild.result == 'FAILURE' ? 'See attachments for details.' : 'None'}
+            """
+
+            mail to: EMAIL_RECIPIENT,
+                 subject: "Build Status Email",
+                 body: emailBody,
+                 attachmentsPattern: '**/*.log'
         }
     }
 }
