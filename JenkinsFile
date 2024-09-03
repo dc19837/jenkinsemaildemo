@@ -133,25 +133,27 @@ pipeline {
     }
     post {
         always {
-            def emailBody = """
-            Build Status: ${currentBuild.result}
-            Stages:
-            - Build: ${currentBuild.currentResult}
-            - Unit and Integration Tests: ${currentBuild.currentResult}
-            - Code Analysis: ${currentBuild.currentResult}
-            - Security Scan: ${currentBuild.currentResult}
-            - Deploy to Staging: ${currentBuild.currentResult}
-            - Integration Tests on Staging: ${currentBuild.currentResult}
-            - Deploy to Production: ${currentBuild.currentResult}
-            Errors: ${currentBuild.result == 'FAILURE' ? 'See attachments for details.' : 'None'}
-            """
+            script {
+                def emailBody = """
+                Build Status: ${currentBuild.result}
+                Stages:
+                - Build: ${currentBuild.currentResult}
+                - Unit and Integration Tests: ${currentBuild.currentResult}
+                - Code Analysis: ${currentBuild.currentResult}
+                - Security Scan: ${currentBuild.currentResult}
+                - Deploy to Staging: ${currentBuild.currentResult}
+                - Integration Tests on Staging: ${currentBuild.currentResult}
+                - Deploy to Production: ${currentBuild.currentResult}
+                Errors: ${currentBuild.result == 'FAILURE' ? 'See attachments for details.' : 'None'}
+                """
 
-            emailext (
-                subject: "Build Status Email",
-                body: emailBody,
-                to: EMAIL_RECIPIENT,
-                attachmentsPattern: '**/*.log'
-            )
+                emailext (
+                    subject: "Build Status Email",
+                    body: emailBody,
+                    to: EMAIL_RECIPIENT,
+                    attachmentsPattern: '**/*.log'
+                )
+            }
         }
     }
 }
