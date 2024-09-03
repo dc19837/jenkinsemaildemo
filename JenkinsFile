@@ -1,60 +1,40 @@
 pipeline {
     agent any
 
-    environment {
-        // Define an environment variable to store logs
-        LOG_DIR = 'logs'
-    }
-
     stages {
         stage('Build') {
             steps {
-                script {
-                    sh "mkdir -p ${LOG_DIR}"
-                    sh "echo 'Building the code...' > ${LOG_DIR}/build.log"
-                }
+                sh 'echo "Building the code..."'
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                script {
-                    sh "echo 'Running unit and integration tests...' > ${LOG_DIR}/tests.log"
-                }
+                sh 'echo "Running unit and integration tests..."'
             }
         }
         stage('Code Analysis') {
             steps {
-                script {
-                    sh "echo 'Analyzing the code...' > ${LOG_DIR}/analysis.log"
-                }
+                sh 'echo "Analyzing the code..."'
             }
         }
         stage('Security Scan') {
             steps {
-                script {
-                    sh "echo 'Scanning the code for vulnerabilities...' > ${LOG_DIR}/security.log"
-                }
+                sh 'echo "Scanning the code for vulnerabilities..."'
             }
         }
         stage('Deploy to Staging') {
             steps {
-                script {
-                    sh "echo 'Deploying to staging...' > ${LOG_DIR}/staging_deploy.log"
-                }
+                sh 'echo "Deploying to staging..."'
             }
         }
         stage('Integration Tests on Staging') {
             steps {
-                script {
-                    sh "echo 'Running integration tests on staging...' > ${LOG_DIR}/staging_tests.log"
-                }
+                sh 'echo "Running integration tests on staging..."'
             }
         }
         stage('Deploy to Production') {
             steps {
-                script {
-                    sh "echo 'Deploying to production...' > ${LOG_DIR}/production_deploy.log"
-                }
+                sh 'echo "Deploying to production..."'
             }
         }
     }
@@ -62,37 +42,15 @@ pipeline {
     post {
         success {
             mail to: "dzassadcass@gmail.com",
-                 subject: "Build Status: SUCCESS",
-                 body: """
-                    The build was successful!
-                    
-                    Logs:
-                    ${LOG_DIR}/build.log
-                    ${LOG_DIR}/tests.log
-                    ${LOG_DIR}/analysis.log
-                    ${LOG_DIR}/security.log
-                    ${LOG_DIR}/staging_deploy.log
-                    ${LOG_DIR}/staging_tests.log
-                    ${LOG_DIR}/production_deploy.log
-                    """,
-                 attachmentsPattern: '**/*.log'
+            subject: "Build Status Email",
+            body: "Build was successful!",
+            attachLog: true
         }
         failure {
             mail to: "dzassadcass@gmail.com",
-                 subject: "Build Status: FAILURE",
-                 body: """
-                    The build failed!
-
-                    Logs:
-                    ${LOG_DIR}/build.log
-                    ${LOG_DIR}/tests.log
-                    ${LOG_DIR}/analysis.log
-                    ${LOG_DIR}/security.log
-                    ${LOG_DIR}/staging_deploy.log
-                    ${LOG_DIR}/staging_tests.log
-                    ${LOG_DIR}/production_deploy.log
-                    """,
-                 attachmentsPattern: '**/*.log'
+            subject: "Build Status Email",
+            body: "Build failed!",
+            attachLog: true
         }
     }
 }
