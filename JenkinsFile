@@ -41,22 +41,19 @@ pipeline {
 
     post {
         success {
-            writeFile file: 'build.log', text: 'Build was successful!'
-            mail (
-                to: "dzassadcass@gmail.com",
-                subject: "Build Status Email",
-                body: "Build was successful!",
-                attachments: ['build.log']
-            )
-        }
-        failure {
-            writeFile file: 'build.log', text: 'Build failed!'
-            mail (
-                to: "dzassadcass@gmail.com",
-                subject: "Build Status Email",
-                body: "Build failed!",
-                attachments: ['build.log']
-            )
+            mail to: "dzassadcass@gmail.com",
+            subject: "Build Status Email",
+            body: "Build Status: SUCCESS
+                   Stages:
+                   - Build: SUCCESS
+                   - Unit and Integration Tests: SUCCESS
+                   - Code Analysis: SUCCESS
+                   - Security Scan: SUCCESS
+                   - Deploy to Staging: SUCCESS
+                   - Integration Tests on Staging: SUCCESS
+                   - Deploy to Production: SUCCESS
+                   Errors: None
+                   BUILD WAS SUCCESSFUL!"
         }
     }
 }
