@@ -150,7 +150,7 @@ pipeline {
                 emailext (
                     subject: "Build Status Email",
                     body: emailBody,
-                    to: EMAIL_RECIPIENT,
+                    mail to: EMAIL_RECIPIENT,
                     attachmentsPattern: '**/*.log'
                 )
             }
