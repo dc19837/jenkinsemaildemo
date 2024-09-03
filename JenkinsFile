@@ -41,31 +41,21 @@ pipeline {
 
     post {
         success {
-            def logFile = currentBuild.rawBuild.getLogFile()
-            def logContent = logFile.text
-            def logBytes = logContent.getBytes()
-
+            writeFile file: 'build.log', text: 'Build was successful!'
             mail (
                 to: "dzassadcass@gmail.com",
                 subject: "Build Status Email",
                 body: "Build was successful!",
-                attachments: [
-                    [fileName: 'build.log', bytes: logBytes]
-                ]
+                attachments: ['build.log']
             )
         }
         failure {
-            def logFile = currentBuild.rawBuild.getLogFile()
-            def logContent = logFile.text
-            def logBytes = logContent.getBytes()
-
+            writeFile file: 'build.log', text: 'Build failed!'
             mail (
                 to: "dzassadcass@gmail.com",
                 subject: "Build Status Email",
                 body: "Build failed!",
-                attachments: [
-                    [fileName: 'build.log', bytes: logBytes]
-                ]
+                attachments: ['build.log']
             )
         }
     }
