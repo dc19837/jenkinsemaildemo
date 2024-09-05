@@ -163,7 +163,7 @@ pipeline {
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attachmentsPattern: '**/*.log'
+                     attachments: attachments
             }
         }
     }
