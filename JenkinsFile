@@ -146,24 +146,20 @@ pipeline {
                 - Integration Tests on Staging: ${currentBuild.currentResult}
                 - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
-                """
 
-                def attachments = [
-                    'build.log',
-                    'test-results.log',
-                    'code-analysis.log',
-                    'security-scan.log',
-                    'deploy-staging.log',
-                    'integration-tests-staging.log',
-                    'deploy-production.log'
-                ].collect { file ->
-                    [file: file, mimeType: 'text/plain']
-                }
+                Logs:
+                Build: ${readFile('build.log')}
+                Unit and Integration Tests: ${readFile('test-results.log')}
+                Code Analysis: ${readFile('code-analysis.log')}
+                Security Scan: ${readFile('security-scan.log')}
+                Deploy to Staging: ${readFile('deploy-staging.log')}
+                Integration Tests on Staging: ${readFile('integration-tests-staging.log')}
+                Deploy to Production: ${readFile('deploy-production.log')}
+                """
 
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody,
-                     attachmentsPattern: attachments.join(',')
+                     body: emailBody
             }
         }
     }
