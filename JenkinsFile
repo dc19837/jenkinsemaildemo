@@ -158,14 +158,12 @@ pipeline {
                     'deploy-production.log'
                 ]
 
-                def attachments = logs.collect { file ->
-                    [readFile(file), file]
-                }
-
-                mail to: EMAIL_RECIPIENT,
-                     subject: "Build Status Email",
-                     body: emailBody,
-                     attachments: attachments
+                emailext (
+                    to: EMAIL_RECIPIENT,
+                    subject: "Build Status Email",
+                    body: emailBody,
+                    attachmentsPattern: logs.join(',')
+                )
             }
         }
     }
