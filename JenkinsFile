@@ -148,7 +148,7 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                def attachments = [
+                def logs = [
                     'build.log',
                     'test-results.log',
                     'code-analysis.log',
@@ -157,13 +157,12 @@ pipeline {
                     'integration-tests-staging.log',
                     'deploy-production.log'
                 ].collect { file ->
-                    [file: file, mimeType: 'text/plain']
-                }
+                    readFile(file)
+                }.join("\n\n")
 
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody,
-                     attachments: attachments
+                     body: emailBody + "\n\nLogs:\n" + logs
             }
         }
     }
