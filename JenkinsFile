@@ -158,11 +158,11 @@ pipeline {
                     'deploy-production.log'
                 ]
 
-                def attachments = logs.collect { file ->
-                    readFile(file)
+                def logLinks = logs.collect { file ->
+                    "<a href='${env.BUILD_URL}artifact/${file}'>${file}</a>"
                 }
 
-                def emailContent = emailBody + "\n\n" + attachments.join("\n\n")
+                def emailContent = emailBody + "\n\n" + "Logs:\n" + logLinks.join("\n")
 
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
