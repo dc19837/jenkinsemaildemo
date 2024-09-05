@@ -146,20 +146,24 @@ pipeline {
                 - Integration Tests on Staging: ${currentBuild.currentResult}
                 - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
-
-                You can download the logs from the following links:
-                - Build: ${env.BUILD_URL}artifact/build.log
-                - Unit and Integration Tests: ${env.BUILD_URL}artifact/test-results.log
-                - Code Analysis: ${env.BUILD_URL}artifact/code-analysis.log
-                - Security Scan: ${env.BUILD_URL}artifact/security-scan.log
-                - Deploy to Staging: ${env.BUILD_URL}artifact/deploy-staging.log
-                - Integration Tests on Staging: ${env.BUILD_URL}artifact/integration-tests-staging.log
-                - Deploy to Production: ${env.BUILD_URL}artifact/deploy-production.log
                 """
+
+                def attachments = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ].collect { file ->
+                    [file: file, mimeType: 'text/plain']
+                }
 
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody
+                     body: emailBody,
+                     attachments: attachments
             }
         }
     }
