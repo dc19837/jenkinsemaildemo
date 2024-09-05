@@ -135,7 +135,6 @@ pipeline {
         always {
             script {
                 def buildStatus = currentBuild.result
-                def emailSubject = "Build Status: ${buildStatus}"
                 def emailBody = """
                 Build Status: ${buildStatus}
                 Stages:
@@ -149,7 +148,7 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                def attachments = [
+                def logs = [
                     'build.log',
                     'test-results.log',
                     'code-analysis.log',
@@ -157,15 +156,16 @@ pipeline {
                     'deploy-staging.log',
                     'integration-tests-staging.log',
                     'deploy-production.log'
-                ].collect { file ->
-                    new File("${JENKINS_HOME}/workspace/${env.JOB_NAME}/${file}")
+                ]
+
+                def attachments = logs.collect { file ->
+                    [readFile(file), file]
                 }
 
                 mail to: EMAIL_RECIPIENT,
-                     subject: emailSubject,
+                     subject: "Build Status Email",
                      body: emailBody,
-                     attachLog: true,
-                     attachmentsPattern: attachments.join(',')
+                     attachments: attachments
             }
         }
     }
