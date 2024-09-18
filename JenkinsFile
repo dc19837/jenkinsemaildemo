@@ -160,7 +160,7 @@ pipeline {
 
                 // Attach logs to email
                 emailext (
-                    mail to: EMAIL_RECIPIENT,
+                    to: EMAIL_RECIPIENT,
                     subject: "Build Status Email",
                     body: emailBody,
                     attachments: logs.collect { "${env.WORKSPACE}/${it}" }
