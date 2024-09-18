@@ -13,13 +13,11 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'test-log.log'
-                    // Send email with attachments using emailext
-                    emailext (
-                        to: EMAIL_RECIPIENT,
-                        subject: "Test Email with Attachment",
-                        body: "This is a test email with attachment.",
-                        attachmentsPattern: 'test-log.log'
-                    )
+                    // Send email with attachments using the mail step
+                    mail to: EMAIL_RECIPIENT,
+                         subject: "Test Email with Attachment",
+                         body: "This is a test email with an attachment. Please find the log file attached.",
+                         attachments: 'test-log.log'  // Use this to attach specific files
                 }
             }
         }
