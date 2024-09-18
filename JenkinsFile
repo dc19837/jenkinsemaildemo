@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        EMAIL_RECIPIENT = "dzassadcass@gmail.com"
+    }
     stages {
         stage('Create Log') {
             steps {
@@ -10,11 +13,13 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'test-log.log'
-                    mail to: "dzassadcass@gmail.com",
-                         subject: "Test Email with Attachment",
-                         body: "This is a test email with attachment.",
-                         attachLog: true  // or specify files directly
-                    // You might need to customize this based on your Jenkins version
+                    // Send email with attachments using emailext
+                    emailext (
+                        to: EMAIL_RECIPIENT,
+                        subject: "Test Email with Attachment",
+                        body: "This is a test email with attachment.",
+                        attachmentsPattern: 'test-log.log'
+                    )
                 }
             }
         }
