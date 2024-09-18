@@ -1,3 +1,8 @@
+@Grab(group='javax.mail', module='mail', version='1.4.7')
+import javax.mail.*
+import javax.mail.internet.*
+import javax.activation.*
+
 pipeline {
     agent any
     environment {
@@ -148,18 +153,50 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                mail to: EMAIL_RECIPIENT,
-                     subject: "Build Status Email",
-                     body: emailBody,
-                     attachments: [
-                         'build.log',
-                         'test-results.log',
-                         'code-analysis.log',
-                         'security-scan.log',
-                         'deploy-staging.log',
-                         'integration-tests-staging.log',
-                         'deploy-production.log'
-                     ]
+                def props = new Properties()
+                props.put("mail.smtp.host", "smtp.your-email-provider.com")
+                props.put("mail.smtp.port", "587")
+                props.put("mail.smtp.auth", "true")
+                props.put("mail.smtp.starttls.enable", "true")
+
+                def session = Session.getInstance(props, new Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("your-email@example.com", "your-email-password")
+                    }
+                })
+
+                def message = new MimeMessage(session)
+                message.setFrom(new InternetAddress("your-email@example.com"))
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(EMAIL_RECIPIENT))
+                message.setSubject("Build Status Email")
+
+                def multipart = new MimeMultipart()
+
+                def textPart = new MimeBodyPart()
+                textPart.setText(emailBody)
+                multipart.addBodyPart(textPart)
+
+                def logs = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ]
+
+                logs.each { file ->
+                    def attachmentPart = new MimeBodyPart()
+                    def source = new FileDataSource(file)
+                    attachmentPart.setDataHandler(new DataHandler(source))
+                    attachmentPart.setFileName(file)
+                    multipart.addBodyPart(attachmentPart)
+                }
+
+                message.setContent(multipart)
+
+                Transport.send(message)
             }
         }
     }
