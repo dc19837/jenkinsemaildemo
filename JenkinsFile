@@ -7,13 +7,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Building the code..." > build.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Building the code..." > build.log'
                 }
             }
             post {
@@ -25,13 +19,7 @@ pipeline {
         stage('Unit and Integration Tests') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Running unit and integration tests..." > test-results.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Running unit and integration tests..." > test-results.log'
                 }
             }
             post {
@@ -43,13 +31,7 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Analyzing the code..." > code-analysis.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Analyzing the code..." > code-analysis.log'
                 }
             }
             post {
@@ -61,13 +43,7 @@ pipeline {
         stage('Security Scan') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Scanning the code for vulnerabilities..." > security-scan.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Scanning the code for vulnerabilities..." > security-scan.log'
                 }
             }
             post {
@@ -79,13 +55,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Deploying to staging..." > deploy-staging.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Deploying to staging..." > deploy-staging.log'
                 }
             }
             post {
@@ -97,13 +67,7 @@ pipeline {
         stage('Integration Tests on Staging') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Running integration tests on staging..." > integration-tests-staging.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Running integration tests on staging..." > integration-tests-staging.log'
                 }
             }
             post {
@@ -115,13 +79,7 @@ pipeline {
         stage('Deploy to Production') {
             steps {
                 script {
-                    try {
-                        sh 'echo "Deploying to production..." > deploy-production.log'
-                        currentBuild.result = 'SUCCESS'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        throw e
-                    }
+                    sh 'echo "Deploying to production..." > deploy-production.log'
                 }
             }
             post {
@@ -148,10 +106,14 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
+                // Create a ZIP archive of all log files
+                sh 'zip logs.zip build.log test-results.log code-analysis.log security-scan.log deploy-staging.log integration-tests-staging.log deploy-production.log'
+
+                // Send email with ZIP file as an attachment
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attachLog: true // Attach the logs as part of the email
+                     attach: 'logs.zip' // Specify the ZIP file as attachment
             }
         }
     }
