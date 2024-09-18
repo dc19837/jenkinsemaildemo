@@ -4,12 +4,6 @@ pipeline {
         EMAIL_RECIPIENT = "dzassadcass@gmail.com"
     }
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the repository, including archive.zip
-                checkout scm
-            }
-        }
         stage('Build') {
             steps {
                 script {
@@ -144,15 +138,16 @@ pipeline {
                 def emailBody = """
                 Build Status: ${buildStatus}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
-
-                The predefined archive.zip file is attached.
                 """
 
-                // Send the email with archive.zip attached
+                // Debug: List workspace files (optional)
+                sh 'ls -al'
+
+                // Attempt to attach the archive.zip file
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attachments: 'archive.zip'
+                     attachments: 'archive.zip' // Ensure archive.zip is in the workspace
             }
         }
     }
