@@ -143,11 +143,18 @@ pipeline {
                 // Debug: List workspace files (optional)
                 sh 'ls -al'
 
-                // Attempt to attach the archive.zip file
+                // Send email body with mail
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody,
-                     attachments: 'archive.zip' // Ensure archive.zip is in the workspace
+                     body: emailBody
+
+                // Send email with attachments using emailext
+                emailext (
+                    to: EMAIL_RECIPIENT,
+                    subject: "Build Artifacts",
+                    body: "Please find the attached build artifacts.",
+                    attachments: 'archive.zip' // Ensure this file exists in the workspace
+                )
             }
         }
     }
