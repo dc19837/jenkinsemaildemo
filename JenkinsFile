@@ -159,13 +159,13 @@ pipeline {
                     'deploy-production.log'
                 ]
 
-                // Prepare attachments
-                def attachments = logs.collect { file -> "${env.WORKSPACE}/${file}" }
-
-                // Send email
-                sh """
-                echo "${emailBody}" | mail -s "Build Status Email" -a ${attachments.join(' -a ')} ${EMAIL_RECIPIENT}
-                """
+                // Prepare email with attachments
+                emailext (
+                    to: EMAIL_RECIPIENT,
+                    subject: "Build Status Email",
+                    body: emailBody,
+                    attachments: logs.collect { "${env.WORKSPACE}/${it}" }.join(', ')
+                )
             }
         }
     }
