@@ -137,23 +137,33 @@ pipeline {
                 def buildStatus = currentBuild.result
                 def emailBody = """
                 Build Status: ${buildStatus}
+                Stages:
+                - Build: ${currentBuild.currentResult}
+                - Unit and Integration Tests: ${currentBuild.currentResult}
+                - Code Analysis: ${currentBuild.currentResult}
+                - Security Scan: ${currentBuild.currentResult}
+                - Deploy to Staging: ${currentBuild.currentResult}
+                - Integration Tests on Staging: ${currentBuild.currentResult}
+                - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                // Debug: List workspace files (optional)
-                sh 'ls -al'
+                def logs = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ]
 
-                // Send email body with mail
-                mail to: EMAIL_RECIPIENT,
-                     subject: "Build Status Email",
-                     body: emailBody
-
-                // Send email with attachments using emailext
+                // Attach logs to email
                 emailext (
-                    to: EMAIL_RECIPIENT,
-                    subject: "Build Artifacts",
-                    body: "Please find the attached build artifacts.",
-                    attachments: 'archive.zip' // Ensure this file exists in the workspace
+                    mail to: EMAIL_RECIPIENT,
+                    subject: "Build Status Email",
+                    body: emailBody,
+                    attachments: logs.collect { "${env.WORKSPACE}/${it}" }
                 )
             }
         }
