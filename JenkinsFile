@@ -4,20 +4,171 @@ pipeline {
         EMAIL_RECIPIENT = "dzassadcass@gmail.com"
     }
     stages {
-        stage('Create Log') {
+        stage('Build') {
             steps {
                 script {
-                    sh 'echo "Test log content" > test-log.log'
+                    try {
+                        sh 'echo "Building the code..." > build.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
                 }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'test-log.log'
-                    // Use shell command to send email with attachment
-                    sh '''
-                    echo "This is a test email with an attachment." | mutt -s "Test Email with Attachment" -a test-log.log -- ${EMAIL_RECIPIENT}
-                    '''
+                    archiveArtifacts artifacts: 'build.log'
                 }
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Running unit and integration tests..." > test-results.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'test-results.log'
+                }
+            }
+        }
+        stage('Code Analysis') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Analyzing the code..." > code-analysis.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'code-analysis.log'
+                }
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Scanning the code for vulnerabilities..." > security-scan.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'security-scan.log'
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Deploying to staging..." > deploy-staging.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'deploy-staging.log'
+                }
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Running integration tests on staging..." > integration-tests-staging.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'integration-tests-staging.log'
+                }
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    try {
+                        sh 'echo "Deploying to production..." > deploy-production.log'
+                        currentBuild.result = 'SUCCESS'
+                    } catch (Exception e) {
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'deploy-production.log'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                def buildStatus = currentBuild.result
+                def emailBody = """
+                Build Status: ${buildStatus}
+                Stages:
+                - Build: ${currentBuild.currentResult}
+                - Unit and Integration Tests: ${currentBuild.currentResult}
+                - Code Analysis: ${currentBuild.currentResult}
+                - Security Scan: ${currentBuild.currentResult}
+                - Deploy to Staging: ${currentBuild.currentResult}
+                - Integration Tests on Staging: ${currentBuild.currentResult}
+                - Deploy to Production: ${currentBuild.currentResult}
+                Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
+
+                You can download the logs from the following links:
+                """
+
+                def logs = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ]
+
+                def logLinks = logs.collect { file ->
+                    "- ${file}: <a href='${env.BUILD_URL}artifact/${file}'>${file}</a>"
+                }
+
+                emailBody += logLinks.join("\n")
+
+                mail to: EMAIL_RECIPIENT,
+                     subject: "Build Status Email",
+                     body: emailBody
             }
         }
     }
