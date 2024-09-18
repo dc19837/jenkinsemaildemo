@@ -134,35 +134,34 @@ pipeline {
     post {
         always {
             script {
-                def buildStatus = currentBuild.result ?: 'SUCCESS'
+                def buildStatus = currentBuild.result
                 def emailBody = """
                 Build Status: ${buildStatus}
+                Stages:
+                - Build: ${currentBuild.currentResult}
+                - Unit and Integration Tests: ${currentBuild.currentResult}
+                - Code Analysis: ${currentBuild.currentResult}
+                - Security Scan: ${currentBuild.currentResult}
+                - Deploy to Staging: ${currentBuild.currentResult}
+                - Integration Tests on Staging: ${currentBuild.currentResult}
+                - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                // Send simple email
+                def logs = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ]
+
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody
-
-                // Send detailed email with attachments
-                emailext(
-                    to: EMAIL_RECIPIENT,
-                    subject: "Detailed Build Status Email",
-                    body: """
-                    ${emailBody}
-
-                    Attached logs:
-                    - <a href='${env.BUILD_URL}artifact/build.log'>build.log</a>
-                    - <a href='${env.BUILD_URL}artifact/test-results.log'>test-results.log</a>
-                    - <a href='${env.BUILD_URL}artifact/code-analysis.log'>code-analysis.log</a>
-                    - <a href='${env.BUILD_URL}artifact/security-scan.log'>security-scan.log</a>
-                    - <a href='${env.BUILD_URL}artifact/deploy-staging.log'>deploy-staging.log</a>
-                    - <a href='${env.BUILD_URL}artifact/integration-tests-staging.log'>integration-tests-staging.log</a>
-                    - <a href='${env.BUILD_URL}artifact/deploy-production.log'>deploy-production.log</a>
-                    """,
-                    attachments: 'build.log,test-results.log,code-analysis.log,security-scan.log,deploy-staging.log,integration-tests-staging.log,deploy-production.log'
-                )
+                     body: emailBody,
+                     attachments: logs.collect { file -> "${env.WORKSPACE}/${file}" }
             }
         }
     }
