@@ -4,6 +4,12 @@ pipeline {
         EMAIL_RECIPIENT = "dzassadcass@gmail.com"
     }
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the repository, including archive.zip
+                checkout scm
+            }
+        }
         stage('Build') {
             steps {
                 script {
@@ -137,39 +143,16 @@ pipeline {
                 def buildStatus = currentBuild.result
                 def emailBody = """
                 Build Status: ${buildStatus}
-                Stages:
-                - Build: ${currentBuild.currentResult}
-                - Unit and Integration Tests: ${currentBuild.currentResult}
-                - Code Analysis: ${currentBuild.currentResult}
-                - Security Scan: ${currentBuild.currentResult}
-                - Deploy to Staging: ${currentBuild.currentResult}
-                - Integration Tests on Staging: ${currentBuild.currentResult}
-                - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
 
-                You can download the logs from the following links:
+                The predefined archive.zip file is attached.
                 """
 
-                def logs = [
-                    'build.log',
-                    'test-results.log',
-                    'code-analysis.log',
-                    'security-scan.log',
-                    'deploy-staging.log',
-                    'integration-tests-staging.log',
-                    'deploy-production.log'
-                ]
-
-                def logLinks = logs.collect { file ->
-                    "- ${file}: <a href='${env.BUILD_URL}artifact/${file}'>${file}</a>"
-                }
-
-                emailBody += logLinks.join("\n")
-
+                // Send the email with archive.zip attached
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
-                     body: emailBody
-                     attach: 'build.log'
+                     body: emailBody,
+                     attach: 'archive.zip'
             }
         }
     }
