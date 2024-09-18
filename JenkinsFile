@@ -158,7 +158,7 @@ pipeline {
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attach: 'Archive.zip'
+                     attach: 'build.log'
             }
         }
     }
