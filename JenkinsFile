@@ -106,14 +106,22 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                // Create a ZIP archive of all log files
-                sh 'zip logs.zip build.log test-results.log code-analysis.log security-scan.log deploy-staging.log integration-tests-staging.log deploy-production.log'
+                // List of log files to attach
+                def logs = [
+                    'build.log',
+                    'test-results.log',
+                    'code-analysis.log',
+                    'security-scan.log',
+                    'deploy-staging.log',
+                    'integration-tests-staging.log',
+                    'deploy-production.log'
+                ]
 
-                // Send email with ZIP file as an attachment
+                // Send email with all log files as attachments
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attach: 'logs.zip' // Specify the ZIP file as attachment
+                     attach: logs.join(',') // Attach logs directly
             }
         }
     }
