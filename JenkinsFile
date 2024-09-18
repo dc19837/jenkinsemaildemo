@@ -152,7 +152,7 @@ pipeline {
                 mail to: EMAIL_RECIPIENT,
                      subject: "Build Status Email",
                      body: emailBody,
-                     attach: 'archive.zip'
+                     attachments: 'archive.zip'
             }
         }
     }
