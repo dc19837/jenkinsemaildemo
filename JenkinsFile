@@ -110,7 +110,7 @@ pipeline {
                     to: EMAIL_RECIPIENT,
                     subject: "Build Status: ${buildStatus}",
                     body: emailBody,
-                    attachLog: true, // Attach the full console log
+                    attachLog: true,
                     attachments: [
                         'build.log',
                         'test-results.log',
