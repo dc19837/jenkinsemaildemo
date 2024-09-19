@@ -111,7 +111,8 @@ pipeline {
                     subject: "Build Status: ${buildStatus}",
                     body: emailBody,
                     attachLog: true,
-                    attachmentsPattern: 'build.log,test-results.log,code-analysis.log,security-scan.log,deploy-staging.log,integration-tests-staging.log,deploy-production.log'
+                    attachmentsPattern: 'build.log,test-results.log,code-analysis.log,security-scan.log,deploy-staging.log,integration-tests-staging.log,deploy-production.log',
+                    debug: true
                 )
             }
         }
