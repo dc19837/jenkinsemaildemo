@@ -106,21 +106,11 @@ pipeline {
                 Errors: None
                 """
 
-                emailext (
-                    to: EMAIL_RECIPIENT,
-                    subject: "Build Status: ${buildStatus}",
-                    body: emailBody,
-                    attachLog: true,
-                    attachments: [
-                        'build.log',
-                        'test-results.log',
-                        'code-analysis.log',
-                        'security-scan.log',
-                        'deploy-staging.log',
-                        'integration-tests-staging.log',
-                        'deploy-production.log'
-                    ].join(',')
-                )
+                sh """
+                echo "${emailBody}" > email_body.txt
+                echo "Sending email..."
+                mail -s "Build Status: ${buildStatus}" -a build.log -a test-results.log -a code-analysis.log -a security-scan.log -a deploy-staging.log -a integration-tests-staging.log -a deploy-production.log ${EMAIL_RECIPIENT} < email_body.txt
+                """
             }
         }
     }
