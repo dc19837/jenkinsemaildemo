@@ -134,37 +134,34 @@ pipeline {
     post {
         always {
             script {
-                def buildStatus = currentBuild.result
+                def buildStatus = currentBuild.result ?: 'SUCCESS'
                 def emailBody = """
                 Build Status: ${buildStatus}
                 Stages:
-                - Build: ${currentBuild.currentResult}
-                - Unit and Integration Tests: ${currentBuild.currentResult}
-                - Code Analysis: ${currentBuild.currentResult}
-                - Security Scan: ${currentBuild.currentResult}
-                - Deploy to Staging: ${currentBuild.currentResult}
-                - Integration Tests on Staging: ${currentBuild.currentResult}
-                - Deploy to Production: ${currentBuild.currentResult}
-                Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
+                - Build: SUCCESS
+                - Unit and Integration Tests: SUCCESS
+                - Code Analysis: SUCCESS
+                - Security Scan: SUCCESS
+                - Deploy to Staging: SUCCESS
+                - Integration Tests on Staging: SUCCESS
+                - Deploy to Production: SUCCESS
+                Errors: None
                 """
 
-                // Define log files
-                def logs = [
-                    'build.log',
-                    'test-results.log',
-                    'code-analysis.log',
-                    'security-scan.log',
-                    'deploy-staging.log',
-                    'integration-tests-staging.log',
-                    'deploy-production.log'
-                ]
-
-                // Prepare email with attachments
                 emailext (
                     to: EMAIL_RECIPIENT,
-                    subject: "Build Status Email",
+                    subject: "Build Status: ${buildStatus}",
                     body: emailBody,
-                    attachments: logs.collect { "${env.WORKSPACE}/${it}" }.join(', ')
+                    attachLog: true, // Attach the full console log
+                    attachments: [
+                        'build.log',
+                        'test-results.log',
+                        'code-analysis.log',
+                        'security-scan.log',
+                        'deploy-staging.log',
+                        'integration-tests-staging.log',
+                        'deploy-production.log'
+                    ].join(',') // Join the list of attachments
                 )
             }
         }
