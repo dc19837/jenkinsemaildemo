@@ -146,11 +146,10 @@ pipeline {
                 - Integration Tests on Staging: ${currentBuild.currentResult}
                 - Deploy to Production: ${currentBuild.currentResult}
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
-
-                You can download the logs from the following links:
                 """
 
-                def logs = [
+                // List of log files to attach
+                def logFiles = [
                     'build.log',
                     'test-results.log',
                     'code-analysis.log',
@@ -160,15 +159,14 @@ pipeline {
                     'deploy-production.log'
                 ]
 
-                def logLinks = logs.collect { file ->
-                    "- ${file}: <a href='${env.BUILD_URL}artifact/${file}'>${file}</a>"
-                }
-
-                emailBody += logLinks.join("\n")
-
-                mail to: EMAIL_RECIPIENT,
-                     subject: "Build Status Email",
-                     body: emailBody
+                // Send the email with attachments
+                emailext(
+                    to: EMAIL_RECIPIENT,
+                    subject: "Build Status Email",
+                    body: emailBody,
+                    attachmentsPattern: logFiles.join(','),
+                    attachLog: true // Optionally attach the console log
+                )
             }
         }
     }
