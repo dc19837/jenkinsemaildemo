@@ -148,7 +148,7 @@ pipeline {
                 Errors: ${buildStatus == 'FAILURE' ? 'See logs for details.' : 'None'}
                 """
 
-                // List of log files to attach
+               
                 def logFiles = [
                     'build.log',
                     'test-results.log',
@@ -159,13 +159,13 @@ pipeline {
                     'deploy-production.log'
                 ]
 
-                // Send the email with attachments
+                
                 emailext(
                     to: EMAIL_RECIPIENT,
                     subject: "Build Status Email",
                     body: emailBody,
                     attachmentsPattern: logFiles.join(','),
-                    attachLog: true // Optionally attach the console log
+                    attachLog: true 
                 )
             }
         }
